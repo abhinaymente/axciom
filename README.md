@@ -109,3 +109,9 @@ dotnet test AcxiomCRM.Tests/AcxiomCRM.Tests.csproj
 - EF Core parameterized queries (SQL injection prevention)
 - Server-side authorization enforced (not just UI hiding)
 - Role-based access scoping for SalesExecutive data isolation
+
+- <img width="1470" height="832" alt="Screenshot 2026-10-07 at 11 34 12 PM" src="https://github.com/user-attachments/assets/0fe56b7a-3e5b-4187-8a29-a9f5fe8f17a6" />
+
+<img width="1470" height="832" alt="Screenshot 2026-10-07 at 11 34 12 PM" src="https://github.com/user-attachments/assets/5765c5f6-fc07-4896-bbb9-6e4e627fbe27" />
+
+
