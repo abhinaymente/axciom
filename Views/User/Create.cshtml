@@ -1,0 +1,63 @@
+@model AcxiomCRM.ViewModels.UserCreateViewModel
+@{
+    ViewData["Title"] = "Create System User";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h4 class="fw-bold m-0 text-danger"><i class="fa-solid fa-user-plus me-2"></i>Create New CRM User</h4>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+                        <input asp-for="FullName" class="form-control" required />
+                        <span asp-validation-for="FullName" class="text-danger fs-7"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+                        <input asp-for="Email" type="email" class="form-control" required />
+                        <span asp-validation-for="Email" class="text-danger fs-7"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Department" class="form-label fw-semibold"></label>
+                            <input asp-for="Department" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Role" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+                            <select asp-for="Role" class="form-select" required>
+                                @if (ViewBag.Roles != null)
+                                {
+                                    foreach (var r in (List<string>)ViewBag.Roles)
+                                    {
+                                        <option value="@r">@r</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+                        <input asp-for="Password" type="password" class="form-control" required />
+                        <div class="form-text fs-7">Must be at least 6 chars with uppercase, lowercase, digit, and special char.</div>
+                        <span asp-validation-for="Password" class="text-danger fs-7"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary px-4">Cancel</a>
+                        <button type="submit" class="btn btn-danger px-4"><i class="fa-solid fa-save me-1"></i> Create User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

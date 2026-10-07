@@ -1,0 +1,91 @@
+@model AcxiomCRM.ViewModels.ActivityListViewModel
+@{
+    ViewData["Title"] = "Sales Activity Log";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold text-dark m-0"><i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i>Activity Log</h4>
+    <a href="@Url.Action("Create")" class="btn btn-primary rounded-pill px-3 shadow-sm">
+        <i class="fa-solid fa-plus me-1"></i> Log Activity
+    </a>
+</div>
+
+<!-- Activity Search Card -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-7">
+                <input type="text" name="search" value="@Model.SearchTerm" class="form-control" placeholder="Search activities by Subject or Description..." />
+            </div>
+            <div class="col-md-3">
+                <select name="type" class="form-select">
+                    <option value="">-- All Activity Types --</option>
+                    <option value="Call" selected="@(Model.TypeFilter == "Call")">Call</option>
+                    <option value="Meeting" selected="@(Model.TypeFilter == "Meeting")">Meeting</option>
+                    <option value="Email" selected="@(Model.TypeFilter == "Email")">Email</option>
+                    <option value="Task" selected="@(Model.TypeFilter == "Task")">Task</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-secondary w-100"><i class="fa-solid fa-filter me-1"></i> Filter</button>
+                <a href="@Url.Action("Index")" class="btn btn-outline-secondary"><i class="fa-solid fa-rotate-right"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Activity Table -->
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Type</th>
+                        <th>Subject</th>
+                        <th>Date</th>
+                        <th>Target (Customer / Lead)</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Activities.Any())
+                    {
+                        foreach (var a in Model.Activities)
+                        {
+                            <tr>
+                                <td><span class="badge bg-secondary">@a.ActivityType</span></td>
+                                <td class="fw-bold text-dark">@a.Subject</td>
+                                <td class="fs-7 text-muted">@a.ActivityDate.ToString("g")</td>
+                                <td>@(a.Customer?.CustomerName ?? a.Lead?.LeadName ?? "-")</td>
+                                <td class="text-truncate" style="max-width: 250px;">@(a.Description ?? "-")</td>
+                                <td><span class="badge bg-success">@a.Status</span></td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">No logged activities found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i, search = Model.SearchTerm, type = Model.TypeFilter })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

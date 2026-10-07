@@ -1,0 +1,101 @@
+@model AcxiomCRM.Models.FollowUp
+@{
+    ViewData["Title"] = "Schedule Follow-Up";
+    string minDate = DateTime.Today.ToString("yyyy-MM-ddTHH:mm");
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h4 class="fw-bold m-0"><i class="fa-solid fa-calendar-plus text-info me-2"></i>Schedule New Follow-Up</h4>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CustomerId" class="form-label fw-semibold"></label>
+                            <select asp-for="CustomerId" class="form-select">
+                                <option value="">-- Select Customer (Optional) --</option>
+                                @if (ViewBag.Customers != null)
+                                {
+                                    foreach (var c in (List<AcxiomCRM.Models.Customer>)ViewBag.Customers)
+                                    {
+                                        <option value="@c.CustomerId">@c.CustomerName (@c.CustomerCode)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="LeadId" class="form-label fw-semibold"></label>
+                            <select asp-for="LeadId" class="form-select">
+                                <option value="">-- Select Lead (Optional) --</option>
+                                @if (ViewBag.Leads != null)
+                                {
+                                    foreach (var l in (List<AcxiomCRM.Models.Lead>)ViewBag.Leads)
+                                    {
+                                        <option value="@l.LeadId">@l.LeadName (@l.LeadCode)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FollowUpDate" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+                            <input asp-for="FollowUpDate" type="datetime-local" min="@minDate" class="form-control" required />
+                            <span asp-validation-for="FollowUpDate" class="text-danger fs-7"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FollowUpType" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+                            <select asp-for="FollowUpType" class="form-select">
+                                <option value="Call">Call</option>
+                                <option value="Meeting">Meeting</option>
+                                <option value="Email">Email</option>
+                                <option value="Task">Task</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Remarks" class="form-label fw-semibold"></label>
+                        <textarea asp-for="Remarks" class="form-control" rows="3" placeholder="Enter follow-up details, agenda, or remarks..."></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Status" class="form-label fw-semibold"></label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="Planned">Planned</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Missed">Missed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="AssignedTo" class="form-label fw-semibold"></label>
+                            <select asp-for="AssignedTo" class="form-select">
+                                @if (ViewBag.Users != null)
+                                {
+                                    foreach (var u in (List<AcxiomCRM.Models.ApplicationUser>)ViewBag.Users)
+                                    {
+                                        <option value="@u.Id">@u.FullName (@u.Email)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary px-4">Cancel</a>
+                        <button type="submit" class="btn btn-info text-white px-4"><i class="fa-solid fa-calendar-check me-1"></i> Save Follow-Up</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,89 @@
+@model AcxiomCRM.Models.Customer
+@{
+    ViewData["Title"] = "Edit Customer - " + Model.CustomerName;
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h4 class="fw-bold m-0"><i class="fa-solid fa-pen text-warning me-2"></i>Edit Customer (@Model.CustomerCode)</h4>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Edit" asp-route-id="@Model.CustomerId" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="CustomerId" />
+                    <input type="hidden" asp-for="CustomerCode" />
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CustomerName" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+                            <input asp-for="CustomerName" class="form-control" required />
+                            <span asp-validation-for="CustomerName" class="text-danger fs-7"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CompanyName" class="form-label fw-semibold"></label>
+                            <input asp-for="CompanyName" class="form-control" />
+                            <span asp-validation-for="CompanyName" class="text-danger fs-7"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Email" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+                            <input asp-for="Email" type="email" class="form-control" required />
+                            <span asp-validation-for="Email" class="text-danger fs-7"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Phone" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+                            <input asp-for="Phone" class="form-control" required />
+                            <span asp-validation-for="Phone" class="text-danger fs-7"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label fw-semibold"></label>
+                        <input asp-for="Address" class="form-control" />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="City" class="form-label fw-semibold"></label>
+                            <input asp-for="City" class="form-control" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="State" class="form-label fw-semibold"></label>
+                            <input asp-for="State" class="form-control" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Status" class="form-label fw-semibold"></label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="AssignedTo" class="form-label fw-semibold"></label>
+                        <select asp-for="AssignedTo" class="form-select">
+                            @if (ViewBag.Users != null)
+                            {
+                                foreach (var u in (List<AcxiomCRM.Models.ApplicationUser>)ViewBag.Users)
+                                {
+                                    <option value="@u.Id" selected="@(Model.AssignedTo == u.Id)">@u.FullName (@u.Email)</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary px-4">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4"><i class="fa-solid fa-save me-1"></i> Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

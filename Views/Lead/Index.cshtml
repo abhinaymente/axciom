@@ -1,0 +1,125 @@
+@model AcxiomCRM.ViewModels.LeadListViewModel
+@{
+    ViewData["Title"] = "Lead Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold text-dark m-0"><i class="fa-solid fa-filter me-2 text-warning"></i>Leads</h4>
+    <a href="@Url.Action("Create")" class="btn btn-warning text-dark rounded-pill px-3 shadow-sm">
+        <i class="fa-solid fa-plus me-1"></i> Add Lead
+    </a>
+</div>
+
+<!-- Search & Filter Card -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-6">
+                <input type="text" name="search" value="@Model.SearchTerm" class="form-control" placeholder="Search by Lead Name, Email, Phone, Company..." />
+            </div>
+            <div class="col-md-4">
+                <select name="status" class="form-select">
+                    <option value="">-- All Lead Statuses --</option>
+                    <option value="New" selected="@(Model.StatusFilter == "New")">New</option>
+                    <option value="Contacted" selected="@(Model.StatusFilter == "Contacted")">Contacted</option>
+                    <option value="Qualified" selected="@(Model.StatusFilter == "Qualified")">Qualified</option>
+                    <option value="Lost" selected="@(Model.StatusFilter == "Lost")">Lost</option>
+                    <option value="Converted" selected="@(Model.StatusFilter == "Converted")">Converted</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-secondary w-100"><i class="fa-solid fa-filter me-1"></i> Filter</button>
+                <a href="@Url.Action("Index")" class="btn btn-outline-secondary"><i class="fa-solid fa-rotate-right"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Lead List Table -->
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Code</th>
+                        <th>Lead Name</th>
+                        <th>Company</th>
+                        <th>Email / Phone</th>
+                        <th>Source</th>
+                        <th>Expected Value</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Leads.Any())
+                    {
+                        foreach (var l in Model.Leads)
+                        {
+                            <tr>
+                                <td class="fw-semibold text-muted">@l.LeadCode</td>
+                                <td class="fw-bold text-dark">@l.LeadName</td>
+                                <td>@(l.CompanyName ?? "-")</td>
+                                <td>
+                                    <div><a href="mailto:@l.Email" class="text-decoration-none fs-7">@l.Email</a></div>
+                                    <div class="text-muted fs-7">@l.Phone</div>
+                                </td>
+                                <td><span class="badge bg-light text-dark border">@l.Source</span></td>
+                                <td class="fw-bold text-success">$@l.ExpectedValue.ToString("N0")</td>
+                                <td>
+                                    @{
+                                        string bgClass = l.Status switch
+                                        {
+                                            "New" => "bg-info text-dark",
+                                            "Contacted" => "bg-primary",
+                                            "Qualified" => "bg-warning text-dark",
+                                            "Converted" => "bg-success",
+                                            "Lost" => "bg-danger",
+                                            _ => "bg-secondary"
+                                        };
+                                    }
+                                    <span class="badge @bgClass">@l.Status</span>
+                                </td>
+                                <td class="text-end">
+                                    @if (l.Status != "Converted")
+                                    {
+                                        <a href="@Url.Action("Convert", new { id = l.LeadId })" class="btn btn-sm btn-success me-1" title="Convert Lead to Customer/Opportunity">
+                                            <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Convert
+                                        </a>
+                                    }
+                                    <a href="@Url.Action("Details", new { id = l.LeadId })" class="btn btn-sm btn-outline-info me-1" title="View"><i class="fa-solid fa-eye"></i></a>
+                                    <a href="@Url.Action("Edit", new { id = l.LeadId })" class="btn btn-sm btn-outline-warning me-1" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                                    <form asp-action="Delete" asp-route-id="@l.LeadId" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this lead?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">No leads found matching the criteria.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i, search = Model.SearchTerm, status = Model.StatusFilter })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

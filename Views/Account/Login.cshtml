@@ -1,0 +1,59 @@
+@model AcxiomCRM.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Sign In";
+    Layout = "_Layout";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold text-primary"><i class="fa-solid fa-chart-line me-2"></i>AcxiomCRM</h3>
+                    <p class="text-muted fs-6">Sign in to access your sales workspace</p>
+                </div>
+
+                <!-- Demo Account Helper Card -->
+                <div class="alert alert-info border-0 rounded-3 mb-4">
+                    <div class="fw-bold mb-1"><i class="fa-solid fa-key me-1"></i> Demo Credentials (Password: <code>AcxiomPass123!</code>):</div>
+                    <ul class="mb-0 ps-3 fs-7">
+                        <li><strong>Admin:</strong> <code>admin@acxiomcrm.com</code></li>
+                        <li><strong>Manager:</strong> <code>manager@acxiomcrm.com</code></li>
+                        <li><strong>Sales Exec:</strong> <code>sales@acxiomcrm.com</code></li>
+                    </ul>
+                </div>
+
+                <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Email" class="form-control" placeholder="name@example.com" required />
+                        <label asp-for="Email">Email Address</label>
+                        <span asp-validation-for="Email" class="text-danger fs-7"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Password" class="form-control" placeholder="Password" required />
+                        <label asp-for="Password">Password</label>
+                        <span asp-validation-for="Password" class="text-danger fs-7"></span>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input asp-for="RememberMe" class="form-check-input" />
+                        <label asp-for="RememberMe" class="form-check-label">Remember me</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 shadow-sm py-2">
+                        Sign In <i class="fa-solid fa-arrow-right ms-2"></i>
+                    </button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="text-muted fs-7">Don't have an account? <a href="@Url.Action("Register", "Account")" class="text-primary fw-semibold">Register here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

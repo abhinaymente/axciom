@@ -1,0 +1,49 @@
+# ASP.NET Core / .NET
+obj/
+bin/
+*.user
+*.suo
+*.userprefs
+*.cache
+*.pidb
+*.log
+.DS_Store
+.vs/
+Thumbs.db
+
+# Entity Framework / SQLite Database (dev only)
+*.db
+*.db-shm
+*.db-wal
+
+# EF Core Migrations (optional - keep if you want migration history)
+# Migrations/
+
+# Secret config files
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+
+# User secrets
+secrets.json
+
+# dotnet publish output
+publish/
+out/
+
+# cloudflared binary (downloaded during deployment attempts)
+cloudflared
+
+# Node / npm (if any frontend tooling)
+node_modules/
+npm-debug.log
+
+# Testing
+TestResults/
+*.trx
+
+# Rider / JetBrains
+.idea/
+
+# VS Code
+.vscode/

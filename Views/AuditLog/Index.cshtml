@@ -1,0 +1,100 @@
+@model IEnumerable<AcxiomCRM.Models.AuditLog>
+@{
+    ViewData["Title"] = "Security Audit Logs";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h4 class="fw-bold text-dark m-0"><i class="fa-solid fa-shield-halved me-2 text-danger"></i>Audit Logs</h4>
+        <p class="text-muted fs-7 m-0">Real-time tracking of security events, authentication attempts, and data operations</p>
+    </div>
+</div>
+
+<!-- Search & Filter Card -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-7">
+                <input type="text" name="search" value="@ViewBag.SearchTerm" class="form-control" placeholder="Search by User, Entity Name, Record ID, or Action..." />
+            </div>
+            <div class="col-md-3">
+                <select name="actionFilter" class="form-select">
+                    <option value="">-- All Actions --</option>
+                    <option value="LOGIN" selected="@(ViewBag.ActionFilter == "LOGIN")">LOGIN</option>
+                    <option value="FAILED_LOGIN" selected="@(ViewBag.ActionFilter == "FAILED_LOGIN")">FAILED_LOGIN</option>
+                    <option value="LOGOUT" selected="@(ViewBag.ActionFilter == "LOGOUT")">LOGOUT</option>
+                    <option value="CREATE" selected="@(ViewBag.ActionFilter == "CREATE")">CREATE</option>
+                    <option value="UPDATE" selected="@(ViewBag.ActionFilter == "UPDATE")">UPDATE</option>
+                    <option value="DELETE" selected="@(ViewBag.ActionFilter == "DELETE")">DELETE</option>
+                    <option value="CONVERT" selected="@(ViewBag.ActionFilter == "CONVERT")">CONVERT</option>
+                    <option value="ROLE_CHANGE" selected="@(ViewBag.ActionFilter == "ROLE_CHANGE")">ROLE_CHANGE</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-secondary w-100"><i class="fa-solid fa-filter me-1"></i> Filter</button>
+                <a href="@Url.Action("Index")" class="btn btn-outline-secondary"><i class="fa-solid fa-rotate-right"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Audit Log Table -->
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 fs-7">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date &amp; Time (UTC)</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Entity</th>
+                        <th>Record ID</th>
+                        <th>Old Value</th>
+                        <th>New Value</th>
+                        <th>IP Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        foreach (var log in Model)
+                        {
+                            <tr>
+                                <td class="text-nowrap text-muted">@log.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                <td class="fw-bold text-dark">@log.UserName</td>
+                                <td>
+                                    @{
+                                        string bgClass = log.Action switch
+                                        {
+                                            "LOGIN" => "bg-success",
+                                            "FAILED_LOGIN" => "bg-danger",
+                                            "LOGOUT" => "bg-secondary",
+                                            "CREATE" => "bg-primary",
+                                            "UPDATE" => "bg-warning text-dark",
+                                            "DELETE" => "bg-danger",
+                                            "CONVERT" => "bg-info text-dark",
+                                            _ => "bg-dark"
+                                        };
+                                    }
+                                    <span class="badge @bgClass">@log.Action</span>
+                                </td>
+                                <td><span class="badge bg-light text-dark border">@log.EntityName</span></td>
+                                <td class="fw-semibold">@log.RecordId</td>
+                                <td class="text-truncate text-muted" style="max-width: 150px;">@(log.OldValue ?? "-")</td>
+                                <td class="text-truncate text-dark fw-semibold" style="max-width: 180px;">@(log.NewValue ?? "-")</td>
+                                <td><code>@log.IpAddress</code></td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">No audit log records found matching the criteria.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

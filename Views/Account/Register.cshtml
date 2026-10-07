@@ -1,0 +1,79 @@
+@model AcxiomCRM.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Register Account";
+    Layout = "_Layout";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold text-primary"><i class="fa-solid fa-user-plus me-2"></i>Create Account</h3>
+                    <p class="text-muted">Register a new user in AcxiomCRM</p>
+                </div>
+
+                <form asp-action="Register" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="FullName" class="form-control" placeholder="John Doe" required />
+                        <label asp-for="FullName">Full Name</label>
+                        <span asp-validation-for="FullName" class="text-danger fs-7"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Email" class="form-control" placeholder="name@example.com" required />
+                        <label asp-for="Email">Email Address</label>
+                        <span asp-validation-for="Email" class="text-danger fs-7"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Department" class="form-control" placeholder="Sales" />
+                                <label asp-for="Department">Department</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <select asp-for="Role" class="form-select">
+                                    <option value="SalesExecutive">Sales Executive</option>
+                                    <option value="Manager">Manager</option>
+                                    <option value="Admin">Admin</option>
+                                </select>
+                                <label asp-for="Role">Requested Role</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Password" class="form-control" placeholder="Password" required />
+                                <label asp-for="Password">Password</label>
+                                <span asp-validation-for="Password" class="text-danger fs-7"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" required />
+                                <label asp-for="ConfirmPassword">Confirm Password</label>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger fs-7"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-lg w-100 rounded-3 shadow-sm py-2">
+                        Register Account <i class="fa-solid fa-check ms-2"></i>
+                    </button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="text-muted fs-7">Already have an account? <a href="@Url.Action("Login", "Account")" class="text-primary fw-semibold">Sign in here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

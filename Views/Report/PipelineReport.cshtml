@@ -1,0 +1,61 @@
+@model IEnumerable<AcxiomCRM.Models.Opportunity>
+@{
+    ViewData["Title"] = "Sales Pipeline Forecast Report";
+    decimal totalVal = Model.Sum(o => o.Amount);
+    decimal weightedVal = Model.Sum(o => o.WeightedAmount);
+}
+
+<h4 class="fw-bold text-dark mb-3"><i class="fa-solid fa-chart-line me-2 text-info"></i>CRM Reports</h4>
+@await Html.PartialAsync("_ReportNav")
+
+<!-- Pipeline KPI Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <span class="text-muted text-uppercase fs-7 fw-semibold">Active Unweighted Pipeline</span>
+            <h3 class="fw-bold text-dark m-0">$@totalVal.ToString("N2")</h3>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <span class="text-muted text-uppercase fs-7 fw-semibold">Weighted Forecast Pipeline</span>
+            <h3 class="fw-bold text-success m-0">$@weightedVal.ToString("N2")</h3>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-header bg-white border-0 pt-3 px-4 d-flex justify-content-between align-items-center">
+        <h6 class="fw-bold m-0 text-info">Sales Pipeline Forecast Details (@Model.Count() deals)</h6>
+        <button onclick="window.print()" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-print me-1"></i> Print / PDF</button>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Deal Name</th>
+                        <th>Stage</th>
+                        <th>Amount</th>
+                        <th>Probability</th>
+                        <th>Weighted Value</th>
+                        <th>Expected Close</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var o in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold">@o.OpportunityName</td>
+                            <td><span class="badge bg-info text-dark">@o.Stage</span></td>
+                            <td class="fw-bold">$@o.Amount.ToString("N0")</td>
+                            <td>@o.Probability%</td>
+                            <td class="fw-bold text-success">$@o.WeightedAmount.ToString("N0")</td>
+                            <td>@o.ExpectedCloseDate.ToString("yyyy-MM-dd")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

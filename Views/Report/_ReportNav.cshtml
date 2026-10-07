@@ -1,0 +1,53 @@
+@{
+    string activeType = ViewBag.ReportType as string ?? "Customer";
+}
+
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body py-2 px-3">
+        <ul class="nav nav-pills nav-fill">
+            <li class="nav-item">
+                <a class="nav-link @(activeType == "Customer" ? "active" : "")" href="@Url.Action("Index", "Report", new { reportType = "Customer" })">
+                    <i class="fa-solid fa-users me-1"></i> Customer
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(activeType == "Lead" ? "active" : "")" href="@Url.Action("Index", "Report", new { reportType = "Lead" })">
+                    <i class="fa-solid fa-filter me-1"></i> Lead
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(activeType == "Opportunity" ? "active" : "")" href="@Url.Action("Index", "Report", new { reportType = "Opportunity" })">
+                    <i class="fa-solid fa-briefcase me-1"></i> Opportunity
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(activeType == "Pipeline" ? "active" : "")" href="@Url.Action("Index", "Report", new { reportType = "Pipeline" })">
+                    <i class="fa-solid fa-chart-line me-1"></i> Pipeline
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(activeType == "FollowUp" ? "active" : "")" href="@Url.Action("Index", "Report", new { reportType = "FollowUp" })">
+                    <i class="fa-solid fa-calendar-check me-1"></i> Follow-Up
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(activeType == "Conversion" ? "active" : "")" href="@Url.Action("Index", "Report", new { reportType = "Conversion" })">
+                    <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Conversion
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(activeType == "UserActivity" ? "active" : "")" href="@Url.Action("Index", "Report", new { reportType = "UserActivity" })">
+                    <i class="fa-solid fa-clock-rotate-left me-1"></i> Activity
+                </a>
+            </li>
+            @if (User.IsInRole("Admin"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @(activeType == "Audit" ? "active" : "")" href="@Url.Action("Index", "Report", new { reportType = "Audit" })">
+                        <i class="fa-solid fa-shield-halved me-1"></i> Audit
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>

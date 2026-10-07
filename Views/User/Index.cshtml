@@ -1,0 +1,92 @@
+@model IEnumerable<AcxiomCRM.ViewModels.UserViewModel>
+@{
+    ViewData["Title"] = "User & Role Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold text-dark m-0"><i class="fa-solid fa-user-gear me-2 text-danger"></i>User &amp; Security Administration</h4>
+        <p class="text-muted fs-7 m-0">Manage system users, role permissions, active status, and account lockouts</p>
+    </div>
+    <a href="@Url.Action("Create")" class="btn btn-danger rounded-pill px-3 shadow-sm">
+        <i class="fa-solid fa-user-plus me-1"></i> Create User
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>User Name / Email</th>
+                        <th>Full Name</th>
+                        <th>Department</th>
+                        <th>Role</th>
+                        <th>Active Status</th>
+                        <th>Lockout Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var u in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold text-dark">@u.Email</td>
+                            <td>@u.FullName</td>
+                            <td><span class="badge bg-light text-dark border">@u.Department</span></td>
+                            <td>
+                                @{
+                                    string roleBadge = u.Role switch
+                                    {
+                                        "Admin" => "bg-danger",
+                                        "Manager" => "bg-purple style='background-color:#8b5cf6; color:white;'",
+                                        "SalesExecutive" => "bg-success",
+                                        _ => "bg-secondary"
+                                    };
+                                }
+                                <span class="badge @roleBadge">@u.Role</span>
+                            </td>
+                            <td>
+                                @if (u.IsActive)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success"><i class="fa-solid fa-check me-1"></i> Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger-subtle text-danger border border-danger"><i class="fa-solid fa-user-slash me-1"></i> Inactive</span>
+                                }
+                            </td>
+                            <td>
+                                @if (u.IsLockedOut)
+                                {
+                                    <span class="badge bg-danger"><i class="fa-solid fa-lock me-1"></i> Locked Out</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary"><i class="fa-solid fa-lock-open me-1"></i> Normal</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <a href="@Url.Action("Edit", new { id = u.Id })" class="btn btn-sm btn-outline-warning me-1" title="Edit User / Role"><i class="fa-solid fa-pen"></i> Edit</a>
+                                <form asp-action="ToggleStatus" asp-route-id="@u.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm @(u.IsActive ? "btn-outline-danger" : "btn-outline-success") me-1" title="Toggle Active Status">
+                                        <i class="fa-solid @(u.IsActive ? "fa-user-xmark" : "fa-user-check")"></i> @(u.IsActive ? "Deactivate" : "Activate")
+                                    </button>
+                                </form>
+                                @if (u.IsLockedOut)
+                                {
+                                    <form asp-action="Unlock" asp-route-id="@u.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-primary" title="Unlock Account"><i class="fa-solid fa-key"></i> Unlock</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

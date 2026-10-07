@@ -1,0 +1,82 @@
+@model AcxiomCRM.Models.Activity
+@{
+    ViewData["Title"] = "Log Activity";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h4 class="fw-bold m-0"><i class="fa-solid fa-plus-circle text-primary me-2"></i>Log Sales Activity</h4>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ActivityType" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+                            <select asp-for="ActivityType" class="form-select">
+                                <option value="Call">Call</option>
+                                <option value="Meeting">Meeting</option>
+                                <option value="Email">Email</option>
+                                <option value="Task">Task</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ActivityDate" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+                            <input asp-for="ActivityDate" type="datetime-local" class="form-control" required />
+                            <span asp-validation-for="ActivityDate" class="text-danger fs-7"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Subject" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+                        <input asp-for="Subject" class="form-control" placeholder="Brief activity subject..." required />
+                        <span asp-validation-for="Subject" class="text-danger fs-7"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CustomerId" class="form-label fw-semibold"></label>
+                            <select asp-for="CustomerId" class="form-select">
+                                <option value="">-- Select Customer (Optional) --</option>
+                                @if (ViewBag.Customers != null)
+                                {
+                                    foreach (var c in (List<AcxiomCRM.Models.Customer>)ViewBag.Customers)
+                                    {
+                                        <option value="@c.CustomerId">@c.CustomerName (@c.CustomerCode)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="LeadId" class="form-label fw-semibold"></label>
+                            <select asp-for="LeadId" class="form-select">
+                                <option value="">-- Select Lead (Optional) --</option>
+                                @if (ViewBag.Leads != null)
+                                {
+                                    foreach (var l in (List<AcxiomCRM.Models.Lead>)ViewBag.Leads)
+                                    {
+                                        <option value="@l.LeadId">@l.LeadName (@l.LeadCode)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label fw-semibold"></label>
+                        <textarea asp-for="Description" class="form-control" rows="3" placeholder="Additional details or meeting notes..."></textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary px-4">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4"><i class="fa-solid fa-save me-1"></i> Log Activity</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

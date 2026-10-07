@@ -1,0 +1,127 @@
+@model AcxiomCRM.ViewModels.OpportunityListViewModel
+@{
+    ViewData["Title"] = "Opportunity Pipeline Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h4 class="fw-bold text-dark m-0"><i class="fa-solid fa-briefcase me-2 text-success"></i>Opportunities Pipeline</h4>
+        <div class="text-muted fs-7">Active Pipeline Value: <strong class="text-success">$@Model.TotalPipelineValue.ToString("N2")</strong></div>
+    </div>
+    <a href="@Url.Action("Create")" class="btn btn-success rounded-pill px-3 shadow-sm">
+        <i class="fa-solid fa-plus me-1"></i> Add Opportunity
+    </a>
+</div>
+
+<!-- Search & Filter Card -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-5">
+                <input type="text" name="search" value="@Model.SearchTerm" class="form-control" placeholder="Search by Opportunity Name, Customer..." />
+            </div>
+            <div class="col-md-3">
+                <select name="stage" class="form-select">
+                    <option value="">-- All Pipeline Stages --</option>
+                    <option value="Qualification" selected="@(Model.StageFilter == "Qualification")">Qualification</option>
+                    <option value="Proposal" selected="@(Model.StageFilter == "Proposal")">Proposal</option>
+                    <option value="Negotiation" selected="@(Model.StageFilter == "Negotiation")">Negotiation</option>
+                    <option value="Won" selected="@(Model.StageFilter == "Won")">Won</option>
+                    <option value="Lost" selected="@(Model.StageFilter == "Lost")">Lost</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="status" class="form-select">
+                    <option value="">-- All Statuses --</option>
+                    <option value="Active" selected="@(Model.StatusFilter == "Active")">Active</option>
+                    <option value="Won" selected="@(Model.StatusFilter == "Won")">Won</option>
+                    <option value="Lost" selected="@(Model.StatusFilter == "Lost")">Lost</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-secondary w-100"><i class="fa-solid fa-filter me-1"></i> Filter</button>
+                <a href="@Url.Action("Index")" class="btn btn-outline-secondary"><i class="fa-solid fa-rotate-right"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Opportunity List Table -->
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Opportunity Name</th>
+                        <th>Customer / Lead</th>
+                        <th>Amount</th>
+                        <th>Stage</th>
+                        <th>Probability</th>
+                        <th>Weighted Value</th>
+                        <th>Close Date</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Opportunities.Any())
+                    {
+                        foreach (var o in Model.Opportunities)
+                        {
+                            <tr>
+                                <td class="fw-bold text-dark">@o.OpportunityName</td>
+                                <td>@(o.Customer?.CustomerName ?? o.Lead?.LeadName ?? "-")</td>
+                                <td class="fw-bold text-dark">$@o.Amount.ToString("N0")</td>
+                                <td>
+                                    @{
+                                        string bgClass = o.Stage switch
+                                        {
+                                            "Qualification" => "bg-info text-dark",
+                                            "Proposal" => "bg-primary",
+                                            "Negotiation" => "bg-warning text-dark",
+                                            "Won" => "bg-success",
+                                            "Lost" => "bg-danger",
+                                            _ => "bg-secondary"
+                                        };
+                                    }
+                                    <span class="badge @bgClass">@o.Stage</span>
+                                </td>
+                                <td>@o.Probability%</td>
+                                <td class="fw-bold text-success">$@o.WeightedAmount.ToString("N0")</td>
+                                <td>@o.ExpectedCloseDate.ToString("yyyy-MM-dd")</td>
+                                <td class="text-end">
+                                    <a href="@Url.Action("Details", new { id = o.OpportunityId })" class="btn btn-sm btn-outline-info me-1" title="View"><i class="fa-solid fa-eye"></i></a>
+                                    <a href="@Url.Action("Edit", new { id = o.OpportunityId })" class="btn btn-sm btn-outline-warning me-1" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                                    <form asp-action="Delete" asp-route-id="@o.OpportunityId" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this opportunity?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">No opportunities found matching the criteria.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i, search = Model.SearchTerm, stage = Model.StageFilter, status = Model.StatusFilter })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

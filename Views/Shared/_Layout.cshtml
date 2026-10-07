@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AcxiomCRM</title>
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --sidebar-width: 250px;
+            --primary-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --accent-color: #3b82f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+
+        #wrapper {
+            display: flex;
+            width: 100%;
+            align-items: stretch;
+            min-height: 100vh;
+        }
+
+        #sidebar {
+            min-width: var(--sidebar-width);
+            max-width: var(--sidebar-width);
+            background: var(--primary-bg);
+            color: #fff;
+            transition: all 0.3s;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        #sidebar .sidebar-header {
+            padding: 20px 15px;
+            background: #020617;
+            font-weight: 700;
+            font-size: 1.25rem;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        #sidebar ul.components {
+            padding: 15px 0;
+        }
+
+        #sidebar ul li a {
+            padding: 12px 20px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        #sidebar ul li a:hover, #sidebar ul li.active > a {
+            color: #ffffff;
+            background: var(--sidebar-hover);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        #sidebar ul li a i {
+            width: 24px;
+            font-size: 1.1rem;
+            margin-right: 10px;
+        }
+
+        #content {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-navbar {
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 10px 25px;
+        }
+
+        .user-pill {
+            background: #f1f5f9;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .badge-role-Admin { background-color: #ef4444; color: white; }
+        .badge-role-Manager { background-color: #8b5cf6; color: white; }
+        .badge-role-SalesExecutive { background-color: #10b981; color: white; }
+
+        .card-kpi {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card-kpi:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08);
+        }
+
+        .kpi-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .footer {
+            margin-top: auto;
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            padding: 15px;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <div id="wrapper">
+            <!-- Sidebar Navigation -->
+            <nav id="sidebar">
+                <div class="sidebar-header d-flex align-items-center justify-content-between">
+                    <span><i class="fa-solid fa-chart-line text-primary me-2"></i>AcxiomCRM</span>
+                </div>
+                <ul class="list-unstyled components">
+                    <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
+                        <a href="@Url.Action("Index", "Home")"><i class="fa-solid fa-house"></i> Dashboard</a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Customer" ? "active" : "")">
+                        <a href="@Url.Action("Index", "Customer")"><i class="fa-solid fa-users"></i> Customers</a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Lead" ? "active" : "")">
+                        <a href="@Url.Action("Index", "Lead")"><i class="fa-solid fa-filter text-warning"></i> Leads</a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Opportunity" ? "active" : "")">
+                        <a href="@Url.Action("Index", "Opportunity")"><i class="fa-solid fa-briefcase text-success"></i> Opportunities</a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "FollowUp" ? "active" : "")">
+                        <a href="@Url.Action("Index", "FollowUp")"><i class="fa-solid fa-calendar-check text-info"></i> Follow-Ups</a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Activity" ? "active" : "")">
+                        <a href="@Url.Action("Index", "Activity")"><i class="fa-solid fa-clock-rotate-left"></i> Activities</a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Report" ? "active" : "")">
+                        <a href="@Url.Action("Index", "Report")"><i class="fa-solid fa-chart-pie"></i> Reports</a>
+                    </li>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="px-3 pt-3 pb-1 text-uppercase fs-7 text-muted fw-bold">Admin Zone</div>
+                        <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "User" ? "active" : "")">
+                            <a href="@Url.Action("Index", "User")"><i class="fa-solid fa-user-gear"></i> User Management</a>
+                        </li>
+                        <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "AuditLog" ? "active" : "")">
+                            <a href="@Url.Action("Index", "AuditLog")"><i class="fa-solid fa-shield-halved"></i> Audit Logs</a>
+                        </li>
+                    }
+
+                    <div class="px-3 pt-3 pb-1 text-uppercase fs-7 text-muted fw-bold">Developer Tools</div>
+                    <li>
+                        <a href="/swagger" target="_blank"><i class="fa-solid fa-code text-primary"></i> REST API Docs</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Main Page Content -->
+            <div id="content">
+                <header class="top-navbar d-flex justify-content-between align-items-center">
+                    <h5 class="m-0 fw-bold text-dark">@ViewData["Title"]</h5>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="user-pill d-flex align-items-center gap-2">
+                            <i class="fa-solid fa-user-circle text-secondary fs-5"></i>
+                            <span>@User.Identity?.Name</span>
+                            @{
+                                string roleClass = User.IsInRole("Admin") ? "badge-role-Admin" : User.IsInRole("Manager") ? "badge-role-Manager" : "badge-role-SalesExecutive";
+                                string roleName = User.IsInRole("Admin") ? "Admin" : User.IsInRole("Manager") ? "Manager" : "SalesExecutive";
+                            }
+                            <span class="badge @roleClass">@roleName</span>
+                        </span>
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                                <i class="fa-solid fa-right-from-bracket me-1"></i> Logout
+                            </button>
+                        </form>
+                    </div>
+                </header>
+
+                <div class="container-fluid p-4">
+                    <!-- Global Flash Messages -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fa-solid fa-check-circle me-2"></i> @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i> @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    @RenderBody()
+                </div>
+
+                <footer class="footer text-center">
+                    <div>AcxiomCRM &copy; @DateTime.Now.Year - Built with ASP.NET Core MVC &amp; EF Core</div>
+                </footer>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="container py-5">
+            @RenderBody()
+        </div>
+    }
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery & Validation -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
